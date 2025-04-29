@@ -1,10 +1,11 @@
-begin
-  require 'method_source'
-  require 'parser/current'
-  require 'unparser'
-rescue LoadError
-  nil
-end
+# NOTE: No witchcraft allowed! Gem "parser" does not support ruby >= 3.4
+# begin
+#   require 'method_source'
+#   require 'parser/current'
+#   require 'unparser'
+# rescue LoadError
+#   nil
+# end
 
 module Chewy
   class Index
