@@ -146,15 +146,6 @@ describe Chewy::Index::Import::BulkBuilder do
           {index: {_id: 42, data: {'name' => 'Name42'}}}
         ])
       end
-
-      context 'witchcraft' do
-        before { CitiesIndex.witchcraft! }
-        specify do
-          expect(subject.bulk_body).to eq([
-            {index: {_id: 42, data: {'name' => 'Name42'}}}
-          ])
-        end
-      end
     end
 
     context 'empty ids' do

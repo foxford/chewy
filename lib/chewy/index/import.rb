@@ -108,8 +108,7 @@ module Chewy
           payload_errors(error_items)
         end
 
-        # Composes a single document from the passed object. Uses either witchcraft
-        # or normal composing under the hood.
+        # Composes a single document from the passed object. Uses composing under the hood.
         #
         # @param object [Object] a data source object
         # @param crutches [Object] optional crutches object; if omitted - a crutch for the single passed object is created as a fallback
@@ -118,11 +117,7 @@ module Chewy
         def compose(object, crutches = nil, fields: [])
           crutches ||= Chewy::Index::Crutch::Crutches.new self, [object]
 
-          if witchcraft? && root.children.present?
-            cauldron(fields: fields).brew(object, crutches)
-          else
-            root.compose(object, crutches, fields: fields)
-          end
+          root.compose(object, crutches, fields: fields)
         end
 
       private

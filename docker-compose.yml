@@ -1,0 +1,18 @@
+services:
+  elastic:
+    image: "elasticsearch:7.17.25"
+    ports:
+      - "9250:9250"
+    environment:
+      - "discovery.type=single-node"
+      - "http.port=9250"
+      - "xpack.security.enabled=false"
+    volumes:
+      - "elastic_data:/usr/share/elasticsearch/data"
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+
+volumes:
+  elastic_data:

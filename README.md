@@ -523,54 +523,6 @@ end
 
 So Chewy Crutches™ technology is able to increase your indexing performance in some cases up to a hundredfold or even more depending on your associations complexity.
 
-### Witchcraft™ technology
-
-One more experimental technology to increase import performance. As far as you know, chewy defines value proc for every imported field in mapping, so at the import time each of these procs is executed on imported object to extract result document to import. It would be great for performance to use one huge whole-document-returning proc instead. So basically the idea or Witchcraft™ technology is to compile a single document-returning proc from the index definition.
-
-```ruby
-index_scope Product
-witchcraft!
-
-field :title
-field :tags, value: -> { tags.map(&:name) }
-field :categories do
-  field :name, value: -> (product, category) { category.name }
-  field :type, value: -> (product, category, crutch) { crutch.types[category.name] }
-end
-```
-
-The index definition above will be compiled to something close to:
-
-```ruby
--> (object, crutches) do
-  {
-    title: object.title,
-    tags: object.tags.map(&:name),
-    categories: object.categories.map do |object2|
-      {
-        name: object2.name
-        type: crutches.types[object2.name]
-      }
-    end
-  }
-end
-```
-
-And don't even ask how is it possible, it is a witchcraft.
-Obviously not every type of definition might be compiled. There are some restrictions:
-
-1. Use reasonable formatting to make `method_source` be able to extract field value proc sources.
-2. Value procs with splat arguments are not supported right now.
-3. If you are generating fields dynamically use value proc with arguments, argumentless value procs are not supported yet:
-
-  ```ruby
-  [:first_name, :last_name].each do |name|
-    field name, value: -> (o) { o.send(name) }
-  end
-  ```
-
-However, it is quite possible that your index definition will be supported by Witchcraft™ technology out of the box in most of the cases.
-
 ### Raw Import
 
 Another way to speed up import time is Raw Imports. This technology is only available in ActiveRecord adapter. Very often, ActiveRecord model instantiation is what consumes most of the CPU and RAM resources. Precious time is wasted on converting, say, timestamps from strings and then serializing them back to strings. Chewy can operate on raw hashes of data directly obtained from the database. All you need is to provide a way to convert that hash to a lightweight object that mimics the behaviour of the normal ActiveRecord object.
@@ -776,11 +728,11 @@ Chewy.settings[:sidekiq] = {queue: :low}
 
 #### `:delayed_sidekiq`
 
-It accumulates IDs of records to be reindexed during the latency window in Redis and then performs the reindexing of all accumulated records at once. 
-This strategy is very useful in the case of frequently mutated records. 
+It accumulates IDs of records to be reindexed during the latency window in Redis and then performs the reindexing of all accumulated records at once.
+This strategy is very useful in the case of frequently mutated records.
 It supports the `update_fields` option, so it will attempt to select just enough data from the database.
 
-Keep in mind, this strategy does not guarantee reindexing in the event of Sidekiq worker termination or an error during the reindexing phase. 
+Keep in mind, this strategy does not guarantee reindexing in the event of Sidekiq worker termination or an error during the reindexing phase.
 This behavior is intentional to prevent continuous growth of Redis db.
 
 There are three options that can be defined in the index:
