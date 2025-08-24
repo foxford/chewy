@@ -10,7 +10,6 @@ require 'chewy/index/observe'
 require 'chewy/index/settings'
 require 'chewy/index/specification'
 require 'chewy/index/syncer'
-require 'chewy/index/witchcraft'
 require 'chewy/index/wrapper'
 
 module Chewy
@@ -31,7 +30,6 @@ module Chewy
     include Mapping
     include Observe
     include Crutch
-    include Witchcraft
     include Wrapper
 
     singleton_class.delegate :client, to: 'Chewy'
